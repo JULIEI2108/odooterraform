@@ -1,19 +1,28 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = ">= 5.0.0"
-    }
-  }
-}
 data "aws_availability_zones" "available" {}
 data "aws_region" "current" {}
 
-# Configure the AWS Provider
-provider "aws" {
-  profile = "odooCredential"
-  region  = "ap-southeast-2"
+data "aws_eip" "elastic_ip" {
+  filter {
+    name   = "public-ip"
+    values = [var.elastic_ip]
+  }
 }
+
+locals {
+  inline = [
+    for domain, email in var.certbot_cert : "sudo ./autoCreateCert.sh ${domain} ${email} "
+  ]
+}
+
+resource "aws_key_pair" "odoo_key" {
+  key_name   = "odooKey"
+  public_key = tls_private_key.odoo_key.public_key_openssh
+
+  lifecycle {
+    ignore_changes = [key_name]
+  }
+}
+
 
 resource "aws_vpc" "odoovpc" {
   cidr_block = var.vpc_cidr
@@ -38,14 +47,11 @@ resource "aws_subnet" "public_subnets" {
   }
 }
 
-resource "aws_eip" "odooIP" {
-  domain = "vpc"
+resource "aws_eip_association" "elastic_ip_association" {
+  instance_id   = aws_instance.odooERP.id
+  allocation_id = data.aws_eip.elastic_ip.id
 }
 
-resource "aws_eip_association" "odooIP" {
-  instance_id   = aws_instance.odooERP.id
-  allocation_id = aws_eip.odooIP.id
-}
 
 resource "aws_internet_gateway" "internet_gateway" {
   vpc_id = aws_vpc.odoovpc.id
@@ -68,6 +74,12 @@ resource "aws_route_table" "public_route_table" {
   }
 }
 
+resource "local_file" "private_key_pem" {
+  content  = tls_private_key.odoo_key.private_key_pem
+  filename = "odooKey.pem"
+
+}
+
 resource "aws_route_table_association" "public" {
   depends_on     = [aws_subnet.public_subnets]
   route_table_id = aws_route_table.public_route_table.id
@@ -76,14 +88,54 @@ resource "aws_route_table_association" "public" {
 
 resource "aws_instance" "odooERP" {
   ami           = var.AMI
-  instance_type = "t2.micro"
+  instance_type = var.instance_type
+
+  root_block_device {
+    volume_size = var.EBS_size
+  }
 
   subnet_id              = aws_subnet.public_subnets.id
   vpc_security_group_ids = [aws_security_group.ingress-ssh.id, aws_security_group.odoo_web.id]
+  key_name               = aws_key_pair.odoo_key.key_name
   tags = {
-    "Terraform" = "true"
+    "Terraform" = "true",
+    "Name"      = var.server_name
   }
 }
+
+resource "null_resource" "install_docker_git" {
+  depends_on = [aws_instance.odooERP, aws_eip_association.elastic_ip_association]
+
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    host        = var.elastic_ip
+    private_key = tls_private_key.odoo_key.private_key_pem
+    timeout     = "8"
+  }
+
+  provisioner "remote-exec" {
+    inline = concat([
+      "sleep 10",
+      "sudo apt-get update -y 1>>  deploymentlog.txt 2>> error.txt",
+      "sudo apt-get install git -y 1>>  deploymentlog.txt 2>> error.txt",
+      "git clone https://github.com/JULIEI2108/get2knowOdoo ",
+      "cd get2knowOdoo",
+      "chmod +x installDocker.sh ",
+      "echo 'starting to install docker engine' && sudo ./installDocker.sh ",
+      "chmod +x autoCreateCert.sh ",
+      "sudo docker compose up -d  1>> deploymentlog.txt 2>> error.txt",
+      "sleep 50"
+      ],
+      local.inline
+    )
+
+  }
+}
+
+
+
+
 
 
 resource "aws_security_group" "ingress-ssh" {
@@ -143,7 +195,7 @@ resource "aws_cloudwatch_metric_alarm" "alarm_for_odooserver" {
   threshold                 = 0.99
   alarm_description         = "StatusCheckFailed_System"
   insufficient_data_actions = [aws_sns_topic.alarm_updates.arn]
-  alarm_actions             = [aws_sns_topic.alarm_updates.arn, aws_instance.odooERP.id]
+  alarm_actions             = [aws_sns_topic.alarm_updates.arn]
 
 }
 
@@ -151,18 +203,6 @@ resource "aws_sns_topic" "alarm_updates" {
   name = "alarm_updates-topic"
 }
 
-# module "autoscaling" {
-#   source  = "terraform-aws-modules/autoscaling/aws"
-#   version = "6.10.0"
-#   name = "odoo autogroup"
-#   availability_zones = [aws_subnet.public_subnets.id]
-#   image_id = var.AMI.default
-#     min_size = 0
-#   max_size = 1
-#   desired_capacity = 1
-#   instance_type = "t2.micro"
-#     tags = {
-#     Name = "odooServer"
-#   }
-#   security_groups = [aws_security_group.ingress-ssh.id, aws_security_group.odoo_web.id]
-# }
+output "inline" {
+  value = local.inline
+}
