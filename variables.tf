@@ -53,9 +53,7 @@ variable "certbot_cert" {
   default = {
     "younglogix.com.au"    = "julie.jin@get2know.org.au"
     "spotter.foodgola.com" = "julie.jin@get2know.org.au"
+    "choise.com.au"        = "julie.jin@get2know.org.au"
   }
 }
 
-output "certbot_cert" {
-  value = var.certbot_cert
-}
