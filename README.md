@@ -45,7 +45,3 @@ Please replace `<project>` and `<your-username>` with your actual project name a
 
 To use this project, follow the steps below:
 
-1. Step 1: [Provide a brief overview of the first step, if applicable]
-
-   ```shell
-   # Include any relevant code snippets or commands
