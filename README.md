@@ -88,7 +88,7 @@ Terraform will prompt you for inputs such as IP address and server name. Please 
 
 You will be asked if you want to deploy the changes on AWS. Type yes and press Enter to proceed with the deployment.
 
-It will take about 5 minutes to deploy the infrastructure. Once the deployment is completed, you should be able to visit Odoo through the URL https://<your-domain>
+It will take about 5 minutes to deploy the infrastructure. Once the deployment is completed, you should be able to visit Odoo through the domain
 
 
 
