@@ -205,7 +205,3 @@ resource "aws_cloudwatch_metric_alarm" "alarm_for_odooserver" {
 resource "aws_sns_topic" "alarm_updates" {
   name = "alarm_updates-topic"
 }
-
-output "inline" {
-  value = local.inline
-}
