@@ -1,5 +1,15 @@
 # odooterraform
-This is an automation terraform script for get2know charity to deploy odoo server as docker on a EC2 instance on AWS. 
+This project is an automation script using Terraform for the Get2Know charity organization to deploy an Odoo server as a Docker container on an EC2 instance within AWS. This script not only deploys the EC2 instance, but also sets up a comprehensive network and monitoring infrastructure, including:
+
+- Virtual Private Cloud (VPC)
+- Public subnet
+- EC2 instance
+- CloudWatch alarm
+- Docker engine installed on the EC2 instance
+- Odoo server running as a Docker container
+- SSL certificate for the domain
+- Configured NGINX server
+
 ## Table of Contents
 - [Prerequisites](#Prerequisites)
 - [Installation](#installation)
@@ -68,7 +78,7 @@ variable "certbot_cert" {
 }
 ```
 
-Replace "<domain1>" and "<domain2>" with your domain and "<email1>" with your email address. Change EBS size or instance_type if required
+Replace <domain1> and <domain2> with your domain and <email1> with your email address. Change EBS size or instance_type if required
 
 2.
 ```bash
