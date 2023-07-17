@@ -51,9 +51,7 @@ variable "server_name" {
 variable "certbot_cert" {
   type = map(any)
   default = {
-    "younglogix.com.au"    = "julie.jin@get2know.org.au"
-    "spotter.foodgola.com" = "julie.jin@get2know.org.au"
-    "choise.com.au"        = "julie.jin@get2know.org.au"
+    "sbg2k.get2know.org.au" = "julie.jin@get2know.org.au"
   }
 }
 
