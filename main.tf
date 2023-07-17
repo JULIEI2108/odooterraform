@@ -197,8 +197,8 @@ resource "aws_cloudwatch_metric_alarm" "alarm_for_odooserver" {
   insufficient_data_actions = [aws_sns_topic.alarm_updates.arn]
   alarm_actions             = [aws_sns_topic.alarm_updates.arn]
   dimensions = {
-       InstanceId = aws_instance.odooERP.id
-     }
+    InstanceId = aws_instance.odooERP.id
+  }
 
 }
 

@@ -18,8 +18,7 @@ AWS Credentials: Obtain valid AWS credentials, including an Access Key and Secre
 
 Domain and IP Address: Ensure that you have a registered domain name and an associated IP address. Additionally, it is important that your current AWS account has control of this IP address. 
 
-By meeting these prerequisites, you will have the necessary tools, credentials, and resources to work effectively with the repository and deploy infrastructure on AWS 
-using Terraform.
+By meeting these prerequisites, you will have the necessary tools, credentials, and resources to work effectively with the repository and deploy infrastructure on AWS using Terraform.
 
 ## Installation
 
@@ -41,7 +40,57 @@ aws configure
 
 Please replace `<project>` and `<your-username>` with your actual project name and username. Make sure not to share your AWS credentials publicly.
 
+```
+
 ## Usage
 
 To use this project, follow the steps below:
+1.Locate the following variable configuration in the Terraform code:
+
+```hcl
+variable "EBS_size" {
+  type    = number
+  default = 16
+
+}
+
+variable "instance_type" {
+  type    = string
+  default = "t2.small"
+}
+
+variable "certbot_cert" {
+  type = map(any)
+  default = {
+    "<domain1>" = "<email1>"
+    "<domain2>" = "<email2>"
+  }
+}
+```
+
+Replace "<domain1>" and "<domain2>" with your domain and "<email1>" with your email address. Change EBS size or instance_type if required
+
+2.
+```bash
+#Run the following command to validate the Terraform script:
+terraform validate
+
+#if the script is valid, run the following command to apply the changes:
+terraform apply
+```
+Terraform will prompt you for inputs such as IP address and server name. Please provide the required inputs.
+
+You will be asked if you want to deploy the changes on AWS. Type yes and press Enter to proceed with the deployment.
+
+It will take about 5 minutes to deploy the infrastructure. Once the deployment is completed, you should be able to visit Odoo through the URL https://<your-domain>
+
+
+
+
+
+
+
+
+
+
 
