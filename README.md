@@ -41,7 +41,7 @@ aws configure
 
 Please replace `<project>` and `<your-username>` with your actual project name and username. Make sure not to share your AWS credentials publicly.
 
-## usage
+## Usage
 
 To use this project, follow the steps below:
 
