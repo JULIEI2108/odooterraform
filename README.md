@@ -18,17 +18,11 @@ This project is an automation script using Terraform for the Get2Know charity or
 ## Prerequisites
 To work with this repository, you will need to meet the following prerequisites:
 
-Git: Ensure that Git is installed on your machine. Git is a version control system used for managing and tracking changes to the project's source code.
-
-Terraform CLI: Install the Terraform CLI (Command Line Interface) on your machine. Terraform is an infrastructure as code (IaC) tool used to provision and manage cloud resources.
-
-AWS CLI: Install the AWS Command Line Interface (CLI) on your machine. The AWS CLI allows you to interact with various Amazon Web Services (AWS) from the command line.
-
-AWS Credentials: Obtain valid AWS credentials, including an Access Key and Secret Access Key, which will authenticate and authorize access to your AWS account. Configure these credentials properly on your machine using the AWS CLI or environment variables.
-
-Domain and IP Address: Ensure that you have a registered domain name and an associated IP address. Additionally, it is important that your current AWS account has control of this IP address. 
-
-By meeting these prerequisites, you will have the necessary tools, credentials, and resources to work effectively with the repository and deploy infrastructure on AWS using Terraform.
+- **Git:** Git should be installed on your machine. It is a version control system utilized for managing and tracking changes in the project's source code.
+- **Terraform CLI:** Install the Terraform CLI on your machine. Terraform is an infrastructure as code (IaC) tool utilized to provision and manage cloud resources.
+- **AWS CLI:** The AWS Command Line Interface (CLI) should be installed on your machine. This allows you to interact with various Amazon Web Services (AWS) directly from the command line.
+- **AWS Credentials:** You should have valid AWS credentials, including an Access Key and Secret Access Key, which will authenticate and authorize access to your AWS account. These credentials should be configured on your machine using the AWS CLI or environment variables.
+- **Domain and IP Address:** You should have a registered domain name and an associated IP address. Additionally, it is important that your AWS account has control over this IP address. 
 
 ## Installation
 
@@ -55,6 +49,7 @@ Please replace `<project>` and `<your-username>` with your actual project name a
 ## Usage
 
 To use this project, follow the steps below:
+
 1.Locate the following variable configuration in the Terraform code:
 
 ```hcl
@@ -80,12 +75,13 @@ variable "certbot_cert" {
 
 Replace <domain1> and <domain2> with your domain and <email1> with your email address. Change EBS size or instance_type if required
 
-2.
+2.Run the following commands to validate the Terraform script and deploy the infrastructure:
+
 ```bash
 #Run the following command to validate the Terraform script:
 terraform validate
 
-#if the script is valid, run the following command to apply the changes:
+#if the script is valid, run the following command to deploy the infrastructure:
 terraform apply
 ```
 Terraform will prompt you for inputs such as IP address and server name. Please provide the required inputs.
